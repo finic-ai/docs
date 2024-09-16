@@ -1,71 +1,61 @@
 ---
 title: Introduction
-description: 'Welcome to the home of your new documentation'
+description: 'Finic helps you deploy agents to the internet.'
 ---
 
-<img
-  className="block dark:hidden"
-  src="/images/hero-light.svg"
-  alt="Hero Light"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.svg"
-  alt="Hero Dark"
-/>
+Finic is a cloud platform designed to simplify the deployment and management of browser-based automation agents, with a focus on fault-tolerant execution.
+It's designed for quickly launching AI bots, web scrapers, API integrations, and other jobs that depend on web services which are unreliable, not optimized for machine consumption, or both.
 
-## Setting up
+```mermaid
+graph LR
+    A[Internet] <--> B[Finic Cloud]
+    B <--> C[Your application or database]
+    
+    subgraph B[Finic Cloud]
+        D[Bot]
+        E[Web Scraper]
+        F[RPA]
+    end
+```
 
-The first step to world-class documentation is setting up your editing environments.
+## Why Finic?
+Finic lets you focus on building powerful web automations without dealing with the complexities of cloud deployment, monitoring, error hanlding, and secret management.
+
+- **Cloud Deployment**: Deploy to Finic Cloud with a single command. Sync to your GitHub repo to automate builds.
+- **Secure Credential Management**: Safely store and access secrets for your agents using Finic's built-in secret manager.
+- **Fault Tolerance**: Agents automatically recover from timeouts, errors, and other transient network issues.
+- **Monitoring and Logging**: Track agent execution and view detailed logs through the Finic dashboard.
+- **Scalability**: Automatically scale your automation workflows as your needs grow, without managing infrastructure.
+
+Finic is an unopinionated framework, so you can build agents using your preferred tools and practices.
+
+## First Steps
+
+Deploy your first web agent to the cloud.
 
 <CardGroup cols={2}>
   <Card
-    title="Edit Your Docs"
+    title="Quickstart"
     icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
+    href="https://finic.ai/docs/quickstart"
   >
-    Get your docs set up locally for easy development
+    Install Finic, create a boilerplate project, deploy it to the cloud, and trigger it.
   </Card>
   <Card
-    title="Preview Changes"
+    title="Local Development"
     icon="image"
-    href="https://mintlify.com/docs/development"
+    href="https://finic.ai/docs/development"
   >
-    Preview your changes before you push to make sure they're perfect
+    How to develop locally and add Finic to existing projects.
   </Card>
 </CardGroup>
 
-## Make it yours
-
-Update your docs to your brand and add valuable content for the best user conversion.
-
-<CardGroup cols={2}>
-  <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
-  >
-    Customize your docs to your company's colors and brands
-  </Card>
-  <Card
-    title="Reference APIs"
-    icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
-  >
-    Automatically generate endpoints from an OpenAPI spec
-  </Card>
-  <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/components/accordion"
-  >
-    Build interactive features and designs to guide your users
-  </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Check out our showcase of our favorite documentation
-  </Card>
-</CardGroup>
+## Roadmap
+- Automated deployment from GitHub.
+- Webhooks to nofify you when agents have finished running or failed.
+- Containers with X11 installed for advanced UI automation.
+- Session impersonation - sync session tokens to the secret manager so your agents can use them.
+- Self healing selectors - use LLMs to propose code fixes when the content changes on target websites.
+- Scheduling and orchestration features to define workflows composed of multiple agents.
+- Automatically detect rate limits and back off to maximize throughput.
+- Set custom timeouts with no upper bound, useful for long running tasks or always-on agents.
