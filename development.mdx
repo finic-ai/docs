@@ -16,21 +16,36 @@ poetry run start
 The only difference is that you'll need to initialize Finic and wrap your main function with a `@finic.workflow_entrypoint` decorator.
 
 ## The Finic decorator
-This decorator tells Finic where the entrypoint to your project is so it can pass in arguments at runtime.
+This decorator tells Finic where the entrypoint to your project is so it can pass in arguments at runtime. The decorator takes in a Pydantic model which it uses to validate that arguments were passed in correctly at runtime.
 ```python
-@finic.workflow_entrypoint
-def main(arg1: str, arg2: Dict):
-    # Your code here
+@finic.workflow_entrypoint(input_model=InputSchema)
+def main(input: InputSchema):
+  # Your code here
 ```
 
 ## Passing in arguments
-The `@finic.workflow_entrypoint` decorator will pass in the data from `inputs.json` as arguments to your entrypoint function. 
-Your code must be written to handle all arguments provided in `inputs.json`, otherwise your agent will fail on execution.
-```json input.json
+When running agents locally, the `@finic.workflow_entrypoint` decorator will pass in the data from `inputs.json` as arguments to your entrypoint function. This makes it easy to test different input values without spinning up a separate service to run your agent.
+<CodeGroup>
+```python main.py
+from finicapi import Finic
+from pydantic import BaseModel
+
+finic = Finic(api_key=YOUR_API_KEY)
+
+def InputSchema(BaseModel):
+  user_id: str
+
+@finic.workflow_entrypoint(input_model=InputSchema)  
+def main(input: InputSchema):
+  user_id = input.user_id
+```
+```json inputs.json
 {
   "user_id": "id_123"
 }
 ```
+
+</CodeGroup>
 <Info>
   After an agent is deployed, `inputs.json` will no longer work. You'll need to pass in arguments from the [Finic dashboard](https://app.finic.ai) when you run an agent.
 </Info>
@@ -39,6 +54,22 @@ Your code must be written to handle all arguments provided in `inputs.json`, oth
 ## Passing in credentials and other secrets
 If your agent needs to authenticate with web services, you'll need to pass in secrets without exposing them in your codebase.
 When running your project locally, data from `secrets.json` will be used to initialize a secret manager. You can retrieve secrets using `finic.secretmanager.get_credentials()`
+<CodeGroup>
+```python main.py
+from finicapi import Finic
+from pydantic import BaseModel
+
+finic = Finic(api_key=YOUR_API_KEY)
+
+def InputSchema(BaseModel):
+  user_id: str
+
+@finic.workflow_entrypoint(input_model=InputSchema)  
+def main(input: InputSchema):
+  user_id = input.user_id # user_id == "id_123"
+  credentials = finic.secrets_manager.get_credentials(user_id)
+  print(credentials) # { "username": "example_user", "password": "password12345"}
+```
 ```json secrets.json
 {
   "id_123": {
@@ -47,13 +78,4 @@ When running your project locally, data from `secrets.json` will be used to init
   }
 }
 ```
-
-## Full example
-```python main.py
-from finicapi import Finic
-finic = Finic(api_key=YOUR_API_KEY)
-@finic.workflow_entrypoint  
-def main(user_id: str):
-  secrets = finic.secrets_manager.get_credentials(user_id) # "id_123" will be passed in from inputs.json
-  print(secrets) # { "username": "example_user", "password": "password12345"}
-```
+</CodeGroup>

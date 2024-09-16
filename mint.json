@@ -29,7 +29,7 @@
     {
       "name": "API Reference",
       "url": "api-reference",
-      "openapi": "https://api.finic.ai/openapi.json"
+      "openapi": "https://api.finic.ai/openapi.yaml"
     }
   ],
   "anchors": [
