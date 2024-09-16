@@ -28,8 +28,7 @@
   "tabs": [
     {
       "name": "API Reference",
-      "url": "api-reference",
-      "openapi": "https://api.finic.ai/openapi.yaml"
+      "url": "api-reference"
     }
   ],
   "anchors": [

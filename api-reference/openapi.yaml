@@ -10,7 +10,7 @@ servers:
 paths:
   /run-agent:
     post:
-      summary: Run an AI agent
+      summary: Run an agent
       description: Execute a specific AI agent with given input
       security:
         - BearerAuth: []
