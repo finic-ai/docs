@@ -15,11 +15,6 @@ depend on IDs or specific tree structures that are often brittle. Using LLMs is 
 In practice, we found that it costs about **\$0.03** per selector with GPT-4o or **\$0.0009** per selector with GPT-4o-mini.
 
 ## Using the Finic Selector Generator
-<video
-    controls
-    className="w-full aspect-video"
-    src="https://github.com/user-attachments/assets/6be8a65a-dce3-4956-8f93-b93686f05e85">
-</video>
 Finic's selector generator runs entirely locally, except for a call to OpenAi or Anthropic using your API key. You can view the code [here](https://github.com/finic-ai/finic/blob/main/python_library/finicapi/selectors.py).
 
 ```bash
@@ -28,14 +23,19 @@ $ finic generate-selectors --api-key <your-openai-or-anthropic-api-key> --url <u
 
 This launches an interactive flow in your terminal for picking elements. At any point the `help` or `h` command will list all available commands.
 
-### Choosing elements
+### Demo video
+<video
+    controls
+    className="w-full aspect-video"
+    src="https://github.com/user-attachments/assets/6be8a65a-dce3-4956-8f93-b93686f05e85">
+</video>
+
+### Step 1: Choose elements
 Your terminal will update whenever a new element is selected. Enter `add` or `a` to queue it up for generation. `list` or `l` will list all queued elements.
+The browser will open in inspect mode, which prevents interacting with the website. Enter `mode` or `m` to toggle inspect mode on and off so you can navigate the website.
 
-### Navigating the website
-The browser will open in inspect mode, which prevents interacting with the website. Enter `mode` or `m` to toggle inspect mode on and off so you can open menus and click buttons.
-
-### Start generation
-`generate` or `g` will start generating selectors for the elements you've queued. To minimize token usage, we send HTML for only the 2 closest siblings of the target element, the parent element, and the grandparent element.
+### Step 2: Generate selectors
+The command `generate` or `g` will start generating selectors for the elements you've queued. To minimize token usage, we send HTML for only the 2 closest siblings of the target element, the parent element, and the grandparent element.
 In our testing this ends up being less than 5000 tokens in most cases.
 
 Selectors will be saved to `selectors.json` in the current directory.
