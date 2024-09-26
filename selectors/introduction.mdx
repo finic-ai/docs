@@ -22,7 +22,7 @@ The next improvement is to offload selector management to a database, and retrie
 However this doesn't actually save the developer much time - they still have to figure out which selectors are broken, then go back to the website and generate new selectors to replace them.
 
 ## The best way to manage selectors
-Finic Selector Service is an improvement over this process by fully managing the selector lifecycle on your behalf. It notifies you when selectors break and can even fixing them automatically without developer intervention or code changes.
+Finic Selector Service is an improvement over this process by fully managing the selector lifecycle on your behalf. It notifies you when selectors break and can even fix them automatically without developer intervention or code changes.
 
 ```python
 from finic import FinicSelectorService, SelectorError
@@ -32,6 +32,8 @@ fss = FinicSelectorService(api_key=<your-finic-api-key>, page=page)
 
 button = page.query_selector(fss.get("fork-button", regenerate=True))
 ```
-If the `regenerate` flag is set, FSS will first attempt to locate the element with the stored selector. If it isn't found, it will call an LLM to generate a new selector based on the current page and cached HTML from previous successful runs.
+If the `regenerate` flag is set, FSS will first attempt to locate the element with the stored selector. If it isn't found, it will 
+locate the selector in a cached version of the page from the last successful run, then traverse through the tree until it finds a common parent that still exists in the new page.
+It will then call an LLM with this context to generate a new selector.
 
 Our goal for the FSS is to **transform selector management** from one of the most time consuming aspects of web automation development into a **total non-issue** for developers.
