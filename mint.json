@@ -17,13 +17,13 @@
   },
   "topbarLinks": [
     {
-      "name": "Support",
-      "url": "mailto:hi@finic.ai"
+      "name": "Contact Us",
+      "url": "mailto:jason@finic.ai"
     }
   ],
   "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://app.finic.ai"
+    "name": "Homepage",
+    "url": "https://finic.io"
   },
   "tabs": [
     {
@@ -59,12 +59,6 @@
         "selectors/introduction",
         "selectors/generating-selectors",
         "selectors/using-selectors"
-      ]
-    },
-    {
-      "group": "Endpoints",
-      "pages": [
-        "api-reference/endpoint/run-agent"
       ]
     }
   ],
