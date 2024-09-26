@@ -1,32 +1,50 @@
 ---
 title: 'Quickstart [5 min]'
-description: 'Connect to a cloud browser and use it to fill out a form online'
+description: 'Launch a Docker container with Chrome installed, connect to it remotely, and use it to fill out a form online'
 ---
-<Note>**This is a preview.** Finic Cloud is currently in development - check out [how to self-host](browsers/self-hosting) in the meantime.</Note>
 
-## 1. Clone repo
+### 1. Clone repo
 ```bash
-git clone 
+git clone https://github.com/finic-ai/finic.git
 ```
-## 2. Launch the Chrome container
-```bash
-sudo docker-compose up --build
-```
-## 3. Run the test script to connect to the browser. It will navigate to [this automation testing page](https://testpages.herokuapp.com/styled/basic-html-form-test.html) and
-fill out the form with hard-coded data.
+### 2. Run the test script locally to make sure it works. 
+It will open a local browser and navigate to [this automation testing page](https://testpages.herokuapp.com/styled/basic-html-form-test.html),
+then fill out the form with hard-coded data.
 ```bash
 python testscript.py
 ```
 
+### 3. Launch the Chrome container
+```bash
+sudo docker-compose up --build
+```
+### 4. Connect the test script to the container 
+Comment out this line:
+```python testscript.py
+browser = p.chromium.launch(headless=False, slow_mo=500)
+```
+and uncomment this line:
+```python testscript.py
+browser = p.chromium.connect_over_cdp("ws://localhost:8000/ws")
+```
+
+Then running the script again:
+```bash
+python testscript.py
+```
+
+This is how you can toggle between local testing with a headful browser, to connecting your script to a deployed Chrome container in production.
+In reality you'll probably want to deploy the Docker container to your cloud platform instead of running it on localhost.
+
 ## Next Steps
-You can now modify the test script however you want, or add Finic to any other web automation project by changing a single line of code.
+You can now modify the test script however you want, or add Finic to an existing web automation project by using `playwright.connect_over_cdp()` or `puppeteer.connect()`
 
 <CodeGroup>
 ```python Playwright (Python)
 from playwright.sync_api import sync_playwright
 
 playwright = sync_playwright().start()
-browser = playwright.chromium.connect_over_cdp(cdp="ws://browser.finic.io/?apikey=<your-finic-api-key>")    
+browser = playwright.chromium.connect_over_cdp("ws://browser.finic.io/?apikey=<your-finic-api-key>")    
 page = browser.new_page()
 await page.goto("https://github.com/finic-ai/finic")
 ```
