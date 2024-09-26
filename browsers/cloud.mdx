@@ -41,10 +41,10 @@ const browser = await puppeteer.launch({ headless: false });
 with this line:
 <CodeGroup>
 ```python Playwright (Python)
-browser = playwright.chromium.connect(cdp_url="wss://browser.finic.io/?apikey=<your-finic-api-key>")
+browser = playwright.chromium.connect_over_cdp("ws://browser.finic.io/?apikey=<your-finic-api-key>")
 ```
 ```typescript Puppeteer (NodeJS)
-const browser = await puppeteer.connect({ browserWSEndpoint: 'wss://browser.finic.io/?apikey=<your-finic-api-key>' });
+const browser = await puppeteer.connect({ browserWSEndpoint: 'ws://browser.finic.io/?apikey=<your-finic-api-key>' });
 ```
 </CodeGroup>
 

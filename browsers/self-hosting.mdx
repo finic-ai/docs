@@ -23,7 +23,7 @@ Once the container is running, you can connect to it like this:
 from playwright.sync_api import sync_playwright
 
 playwright = sync_playwright().start()
-browser = playwright.chromium.conne t(cdp="ws://localhost:8080/ws")    
+browser = playwright.chromium.connect_over_cdp("ws://localhost:8080/ws")    
 page = browser.new_page()
 await page.goto("https://github.com/finic-ai/finic")
 # ... The rest of your automation code

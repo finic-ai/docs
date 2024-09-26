@@ -1,45 +1,32 @@
 ---
-title: 'Quickstart [10 min]'
-description: 'Connect to a cloud browser and use it to fill out a form'
+title: 'Quickstart [5 min]'
+description: 'Connect to a cloud browser and use it to fill out a form online'
 ---
 <Note>**This is a preview.** Finic Cloud is currently in development - check out [how to self-host](browsers/self-hosting) in the meantime.</Note>
 
-## Clone example project
-Clone this example repository: https://github.com/finic-ai/form-filler. It contains boilerplate for navigating to this [test page](https://testpages.herokuapp.com/styled/basic-html-form-test.html) for practicing automation.
-
-## Run locally
-Run the project to confirm it works locally.
+## 1. Clone repo
 ```bash
-poetry install
-poetry run start
+git clone 
 ```
-You should see a browser open and the form being filled out as the script runs, followed by a "Form submission successful" message in your terminal.
-
-## Run with Finic Browser Service
-Finic has a free tier with up to 100 minutes of browser time per month, but you'll need to create an account so we can provision you with an API key and monitor usage to make sure it's not being abused. Sign in at https://app.finic.io, then go to the settings page to find your API key.
-
-Once you have an API key, comment out this line:
-```python
-browser = p.chromium.launch(headless=False, slow_mo=500)
+## 2. Launch the Chrome container
+```bash
+sudo docker-compose up --build
 ```
-
-Then uncomment this line and insert the API key you received.
-```python
-browser = p.chromium.connect(cdp="wss://browser.finic.io/?apikey=<your-finic-api-key>")
+## 3. Run the test script to connect to the browser. It will navigate to [this automation testing page](https://testpages.herokuapp.com/styled/basic-html-form-test.html) and
+fill out the form with hard-coded data.
+```bash
+python testscript.py
 ```
-
-Run the project again. This time, you won't see a browser pop up, but after a few seconds the "Form submission successful" message will appear, confirming that **you successfully connected to a browser
-running in the cloud and controlled it.**
 
 ## Next Steps
-You can now modify this script however you want, or add Finic to any other web automation project by changing a single line of code.
+You can now modify the test script however you want, or add Finic to any other web automation project by changing a single line of code.
 
 <CodeGroup>
 ```python Playwright (Python)
 from playwright.sync_api import sync_playwright
 
 playwright = sync_playwright().start()
-browser = playwright.chromium.conne t(cdp="wss://browser.finic.io/?apikey=<your-finic-api-key>")    
+browser = playwright.chromium.connect_over_cdp(cdp="ws://browser.finic.io/?apikey=<your-finic-api-key>")    
 page = browser.new_page()
 await page.goto("https://github.com/finic-ai/finic")
 ```
@@ -48,7 +35,7 @@ import puppeteer from 'puppeteer-core';
 
 (async () => {
   const browser = await puppeteer.connect({
-    browserWSEndpoint: 'wss://browser.finic.io/?apikey=<your-finic-api-key>'
+    browserWSEndpoint: 'ws://browser.finic.io/?apikey=<your-finic-api-key>'
   });
   const page = await browser.newPage();
   await page.goto('https://github.com/finic-ai/finic');

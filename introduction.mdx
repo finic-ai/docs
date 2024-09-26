@@ -60,7 +60,7 @@ browser = playwright.chromium.launch(headless=False)
 ```
 with this:
 ```
-browser = playwright.chromium.connect(cdp_url="wss://browser.finic.io/?apikey=<your-finic-api-key>")
+browser = playwright.chromium.connect_over_cdp("ws://browser.finic.io/?apikey=<your-finic-api-key>")
 ```
 
 If you're self hosting, simply replace the `cdp_url` with the url of the Finic instance running on your own server.
