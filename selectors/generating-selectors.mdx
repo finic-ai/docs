@@ -1,0 +1,63 @@
+---
+title: 'Generating Selectors'
+description: 'How to generate XPath and CSS selectors for any website using Finic.'
+---
+
+There are a few ways to generate selectors for a new scraping or automation project:
+
+1. **Chrome DevTools:** Chrome has a nifty features where if you inspect any element in the DOM, you can right click on it and go to the Copy menu to copy a CSS or XPath selector to the element.
+2. **DIY:** If you have experience with XPath or CSS selectors, you can often infer what attributes and structural elements to use to generate selectors.
+3. **Finic:** Run `finic generate-selectors` to use a LLM to predict selectors for elements you pick out.
+
+Each option has different tradeoffs. Defining selectors yourself is the most reliable method, but also most time consuming. Using DevTools makes it easy to get started, but the selectors it generates
+depend on IDs or specific tree structures that are often brittle. Using LLMs is more reliable than DevTools and faster than DIY, but has its own LLM-associated drawbacks (hallucinations, cost, etc).
+
+In practice, we found that it costs about **\$0.03** per selector with GPT-4o or **\$0.0009** per selector with GPT-4o-mini.
+
+## Using the Finic Selector Generator
+Finic's selector generator runs entirely locally, except for a call to OpenAi or Anthropic using your API key. You can view the code [here](https://github.com/finic-ai/finic/blob/main/python_library/finicapi/selectors.py).
+
+```bash
+$ finic generate-selectors --api-key <your-openai-or-anthropic-api-key> --url <url-of-website>
+```
+
+This launches an interactive flow in your terminal for picking elements. At any point the `help` or `h` command will list all available commands.
+
+### Choosing elements
+Your terminal will update whenever a new element is selected. Enter `add` or `a` to queue it up for generation. `list` or `l` will list all queued elements.
+
+### Navigating the website
+The browser will open in inspect mode, which prevents interacting with the website. Enter `mode` or `m` to toggle inspect mode on and off so you can open menus and click buttons.
+
+### Start generation
+`generate` or `g` will start generating selectors for the elements you've queued. To minimize token usage, we send HTML for only the 2 closest siblings of the target element, the parent element, and the grandparent element.
+In our testing this ends up being less than 5000 tokens in most cases.
+
+Selectors will be saved to `selectors.json` in the current directory.
+
+## Registering selectors with Finic Selector Service (FSS)
+<Note>**This is a preview:** The Finic Selector Service is currently in development and not yet available.</Note>
+Once you've generated selectors using the Finic SDK or another option, you can load it into FSS to easily retrieve them at runtime, and to enable self-healing. To do this, you'll need to send an array of selector objects to our API endpoint:
+
+```curl
+curl --location --request POST 'https://api.finic.io/register_selector' \
+--header 'Authorization: Bearer <Finic-API-Key>' \
+--header 'Content-Type: application/json' \
+--data '[
+    {
+        "selector_id": "<unique-identifier-for-selector>",
+        "selector": "<your-xpath-or-css-selector>",
+        "selector_type": "<xpath-or-css>",
+        "url": "<url-of-the-page-where-selector-is-used>"
+    },
+    {
+        "selector_id": "<unique-identifier-for-another-selector>",
+        "selector": "<another-xpath-or-css-selector>",
+        "selector_type": "<xpath-or-css>",
+        "url": "<url-of-the-page-where-selector-is-used>"
+    }
+    ...
+]'
+```
+Keep in mind that calling this endpoing with the same `selector_id` will overwrite existing registered selectors.
+<Warning>We plan on updating the Finic SDK to automatically sync `selectors.json` with FSS in a future update.</Warning>

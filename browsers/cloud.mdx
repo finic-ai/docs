@@ -1,0 +1,51 @@
+---
+title: 'Finic Cloud'
+description: "How to connect to Finic's Cloud Browser Service"
+---
+<Note>**This is a preview.** Finic Cloud is currently in development - check out [how to self-host](browsers/self-hosting) in the meantime.</Note>
+Connecting to Finic's Browser servce is easy.
+
+When developing, your code probably looks something like this:
+<CodeGroup>
+```python Playwright (Python)
+from playwright.sync_api import sync_playwright
+
+playwright = sync_playwright().start()
+browser = await playwright.chromium.launch(headless=False)
+
+page = await browser.new_page()
+page.goto("https://github.com/finic-ai/finic")
+```
+```typescript Puppeteer (NodeJS)
+import puppeteer from 'puppeteer-core';
+
+(async () => {
+  const browser = await puppeteer.launch({ headless: false });
+  const page = await browser.newPage();
+  await page.goto('https://github.com/finic-ai/finic');
+})();
+
+```
+</CodeGroup>
+
+All you have to do is replace this line:
+<CodeGroup>
+```python Playwright (Python)
+browser = await playwright.chromium.launch(headless=False)
+```
+```typescript Puppeteer (NodeJS)
+const browser = await puppeteer.launch({ headless: false });
+```
+</CodeGroup>
+
+with this line:
+<CodeGroup>
+```python Playwright (Python)
+browser = playwright.chromium.connect(cdp_url="wss://browser.finic.io/?apikey=<your-finic-api-key>")
+```
+```typescript Puppeteer (NodeJS)
+const browser = await puppeteer.connect({ browserWSEndpoint: 'wss://browser.finic.io/?apikey=<your-finic-api-key>' });
+```
+</CodeGroup>
+
+That's it. If it works locally, your code should still work once you deploy, as long as you container supports WebSocket connections.

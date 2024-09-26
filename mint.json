@@ -1,15 +1,15 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "Finic Docs",
   "logo": {
     "dark": "/logo/dark.svg",
     "light": "/logo/light.svg"
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#FF5106",
+    "light": "#FF5106",
+    "dark": "#FF5106",
     "anchors": {
       "from": "#0D9373",
       "to": "#07C983"
@@ -27,8 +27,8 @@
   },
   "tabs": [
     {
-      "name": "API Reference",
-      "url": "api-reference"
+      "name": "Blog",
+      "url": "blog"
     }
   ],
   "anchors": [
@@ -45,18 +45,20 @@
   ],
   "navigation": [
     {
-      "group": "Get Started",
+      "group": "Browser Service",
       "pages": [
         "introduction",
         "quickstart",
-        "development"
+        "browsers/self-hosting",
+        "browsers/cloud"
       ]
     },
     {
-      "group": "Deployment",
+      "group": "Selector Service",
       "pages": [
-        "deployment/deployment",
-        "deployment/running"
+        "selectors/introduction",
+        "selectors/generating-selectors",
+        "selectors/using-selectors"
       ]
     },
     {

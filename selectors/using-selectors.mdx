@@ -1,0 +1,28 @@
+---
+title: 'Using Selectors'
+description: 'How to connect to Finic Selector Service (FSS) to fetch selectors at runtime.'
+---
+
+<Note>**This is a preview:** The Finic Selector Service is currently in development and not yet available.</Note>
+
+Once you've [registered selectors](/selectors/generating#loading-selectors-into-finic-selector-service-fss) you can start using them in your application.
+
+```python
+from finic import FinicSelectorService, SelectorError
+
+page = browser.new_page()
+fss = FinicSelectorService(api_key=<your-finic-api-key>, page=page)
+
+# Fetch selectors
+button = page.query_selector(fss.get("fork-button"))
+```
+
+## Self-healing selectors
+If you'd like to enable self-healing mode, simply pass `regenerate=True` to the `get()` method.
+
+```python
+button = page.query_selector(fss.get("fork-button", regenerate=True))
+```
+
+This attempts to locate the element from the current page based on the selector retrieved. If it fails, it makes a call to a LLM to
+generate a new selector, passing in data cached from previous successful executions.

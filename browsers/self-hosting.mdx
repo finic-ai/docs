@@ -1,0 +1,50 @@
+---
+title: 'Self Hosting'
+description: "How run and deploy Finic's Chrome image"
+---
+
+Start by cloning [the Finic repo](https://github.com/finic-ai/finic).
+```bash
+git clone https://github.com/finic-ai/finic.git
+```
+
+## Running Locally
+Run the image locally the same as any other Docker container.
+
+```bash
+docker compose
+docker up
+```
+
+Once the container is running, you can connect to it like this:
+
+<CodeGroup>
+```python Playwright (Python)
+from playwright.sync_api import sync_playwright
+
+playwright = sync_playwright().start()
+browser = playwright.chromium.conne t(cdp="ws://localhost:8080/ws")    
+page = browser.new_page()
+await page.goto("https://github.com/finic-ai/finic")
+# ... The rest of your automation code
+```
+```typescript Puppeteer (NodeJS)
+import puppeteer from 'puppeteer-core';
+
+(async () => {
+  const browser = await puppeteer.connect({
+    browserWSEndpoint: 'ws://localhost:8080/ws'
+  });
+  const page = await browser.newPage();
+  await page.goto('https://github.com/finic-ai/finic');
+  // ... The rest of your automation code
+})();
+
+```
+</CodeGroup>
+
+## Deploying
+Deploying the Finic chrome image should be the same as deploying any other container to your cloud platform. Links for each major platform:
+- [GCP](https://cloud.google.com/run/docs/deploying)
+- [AWS](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-container-image.html)
+- [Azure](https://learn.microsoft.com/en-us/azure/container-instances/container-instances-overview)

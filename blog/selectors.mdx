@@ -1,0 +1,38 @@
+---
+title: Selectors
+---
+
+Selectors are one of the primitives of building web automations. CSS and XPath are the most commonly used selector formats.
+
+## Generating selectors for a new project
+
+There are a few ways to generate selectors:
+
+1. Chrome DevTools: Chrome has a nifty features where if you inspect any element in the DOM, you can right click on it and go to the Copy menu to copy a CSS or XPath selector to the element.
+2. DIY: If you have experience with XPath or CSS selectors, you can often infer what attributes and structural elements to use to generate selectors.
+3. AI: Pass some HTML context to a LLM and ask it to generate a selector.
+
+The problem is, there are many possible selectors that resolve to the same element. So the choice of what selector to use is important if you want your automation to be resilient in the face of changes to the target website.
+
+## Fixing broken selectors
+
+Broken selectors are probably going to be the most common reason your automations break. This can happen whenever the target website gets updated, but how often your selectors break depends on how you defined the selector.
+
+For example, these are both valid XPaths for the `Star` button in the Finic repo. The top one is from Chrome DevTools, and the bottom is from Finic using GPT4o to generate.
+
+```
+//*[@id="repository-details-container"]/ul/li[3]/div/a
+```
+
+```
+//li//div[@class='BtnGroup d-flex']//a[contains(@aria-label, 'You must be signed in to star a repository')]
+```
+
+The top selector is more concise, but because it relies on a specific DOM structure, if GitHub ever decides to swap the position of the "Star" and "Fork" buttons, the selector will no longer work. 
+However, the bottom selector will still work.
+
+Conversely, the bottom selector depends on an `aria-label` attribute and expects it to be equal to "You must be signed in to star a repository". So if GitHub ever changes this label, the bottom selector will break but the top one
+will still work.
+
+There are an infinite number of ways websites can change, so the decision of what selector to use is actually pretty subjective. But no selector is impervious to changes, so it's pointless trying to pick the best possible selector at the start.
+Instead, in our opinion the best approach is to build a system that makes it as fast as possible to tell when a selector is broken, and to replace it with one that works, ideally without any developer intervention.

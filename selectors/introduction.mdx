@@ -1,0 +1,37 @@
+---
+title: 'Introduction'
+description: 'Never deal with broken selectors again'
+---
+<Note>**This is a preview:** The Finic Selector Service is currently in development and not yet available.</Note>
+# Finic Selector Service
+Selectors are the most import, yet least reliable part of any web automation, which is why it's what developers spend the most time fixing. Fixing them can also be frustrating 
+as selectors can break at any time with no warning, due to factors completely outside your control.
+
+## The bad way to manage selectors
+Most web automation developers will start by hard coding selectors in their code, like this:
+
+```python
+button = page.query_selector("//ul[contains(@class, 'pagehead-actions')]/li/a[@id='fork-button']")
+```
+
+This works fine in testing, but is a headache to update in production when selectors break. A single broken selector requires a code change, PR reviews, and deployment cycle.
+
+## The better way to manage selectors
+The next improvement is to offload selector management to a database, and retrieve it at runtime. This approach is better - at least now broken selectors can be updated with a SQL query instead of a code change. 
+
+However this doesn't actually save the developer much time - they still have to figure out which selectors are broken, then go back to the website and generate new selectors to replace them.
+
+## The best way to manage selectors
+Finic Selector Service is an improvement over this process by fully managing the selector lifecycle on your behalf. It notifies you when selectors break and can even fixing them automatically without developer intervention or code changes.
+
+```python
+from finic import FinicSelectorService, SelectorError
+
+page = browser.new_page()
+fss = FinicSelectorService(api_key=<your-finic-api-key>, page=page)
+
+button = page.query_selector(fss.get("fork-button", regenerate=True))
+```
+If the `regenerate` flag is set, FSS will first attempt to locate the element with the stored selector. If it isn't found, it will call an LLM to generate a new selector based on the current page and cached HTML from previous successful runs.
+
+Our goal for the FSS is to **transform selector management** from one of the most time consuming aspects of web automation development into a **total non-issue** for developers.

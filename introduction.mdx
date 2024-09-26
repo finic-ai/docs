@@ -1,61 +1,73 @@
 ---
 title: Introduction
-description: 'Finic helps you deploy agents to the internet.'
+description: "A fleet of reliable browsers at your fingertips."
 ---
+## First Steps
 
-Finic is a cloud platform designed to simplify the deployment and management of browser-based automation agents, with a focus on fault-tolerant execution.
-It's designed for quickly launching AI bots, web scrapers, API integrations, and other jobs that depend on web services which are unreliable, not optimized for machine consumption, or both.
+<CardGroup cols={2}>
+  <Card
+    title="Self Hosting"
+    icon="pen-to-square"
+    href="https://docs.finic.ai/self-hosting"
+  >
+    Run the Finic Chrome image locally or deploy it to your cloud.
+  </Card>
+</CardGroup>
+
+Finic provides browser infrastructure for developers building web scrapers, browser automations, and AI agents. It does this by giving you a browser in the cloud you can control remotely using Playwright or Puppeteer (in just a few lines), 
+or Selenium (with some work).
+
+Finic lets you focus on the **automation logic** while delegating **browser and network level infrastructure** to us.
 
 ```mermaid
 graph LR
     A[Internet] <--> B[Finic Cloud]
-    B <--> C[Your application or database]
+    B <--> C[Your backend]
     
-    subgraph B[Finic Cloud]
-        D[Bot]
-        E[Web Scraper]
-        F[RPA]
+    subgraph B[Finic]
+        D[Headless Browsers]
+        E[Headful Browsers]
     end
 ```
+### Why might you need this?
+Normally, when you deploy a web automation, it launches a fresh headless browser in the same container your code is running. This works for simple use cases, but can become unwieldy as you scale. 
+Chromium is memory intensive and requires constant monitoring to make sure it doesn't crash, especially with multiple automations running in the same container. 
 
-## Why Finic?
-Finic lets you focus on building powerful web automations without dealing with the complexities of cloud deployment, monitoring, error hanlding, and secret management.
+Modern CDNs also employ a dizzying array of strategies for detecting and blocking bots you'll need to contend with. For example:
+- **IP address monitoring**
+- **HTTP header analysis**
+- **Browser fingerprinting based on user agent, installed fonts, cookies, etc**
+- **Device telemetry if available**
+- **Interactive and invisble Captcha challenges**
 
-- **Cloud Deployment**: Deploy to Finic Cloud with a single command. Sync to your GitHub repo to automate builds.
-- **Secure Credential Management**: Safely store and access secrets for your agents using Finic's built-in secret manager.
-- **Fault Tolerance**: Agents automatically recover from timeouts, errors, and other transient network issues.
-- **Monitoring and Logging**: Track agent execution and view detailed logs through the Finic dashboard.
-- **Scalability**: Automatically scale your automation workflows as your needs grow, without managing infrastructure.
+Rather than implement features to circumvent these detectors, it's much easier to connect to a managed browser instance like Finic that takes care of **scaling** and
+**stealth** for you.
 
-Finic is an unopinionated framework, so you can build agents using your preferred tools and practices.
+### Benefits
+Finic's Browser Service let you decouple your automation code from the code that runs the browser.
 
-## First Steps
+This has several benefits:
+- **You get a browser in the cloud that "just works"** and doesn't require any configuration
+- You can deploy to services like Lambda or Cloud Functions without worrying about image sizes, resource allocation, or network configuration
+- You benefit from reliability improvements without having to update your code or your dependencies
+- Debugging is straightforward since you can immediately tell if an error was due to the browser being blocked (our fault) or your code (your fault)
 
-Deploy your first web agent to the cloud.
+Adding Finic to an existing project is easy - just pass in our browser's URL when launching a new browser in Playwright.
 
-<CardGroup cols={2}>
-  <Card
-    title="Quickstart"
-    icon="pen-to-square"
-    href="https://finic.ai/docs/quickstart"
-  >
-    Install Finic, create a boilerplate project, deploy it to the cloud, and trigger it.
-  </Card>
-  <Card
-    title="Local Development"
-    icon="image"
-    href="https://finic.ai/docs/development"
-  >
-    How to develop locally and add Finic to existing projects.
-  </Card>
-</CardGroup>
+All you have to do is replace this:
+```python
+browser = playwright.chromium.launch(headless=False)
+```
+with this:
+```
+browser = playwright.chromium.connect(cdp_url="wss://browser.finic.io/?apikey=<your-finic-api-key>")
+```
 
-## Roadmap
-- Automated deployment from GitHub.
-- Webhooks to nofify you when agents have finished running or failed.
-- Containers with X11 installed for advanced UI automation.
-- Session impersonation - sync session tokens to the secret manager so your agents can use them.
-- Self healing selectors - use LLMs to propose code fixes when the content changes on target websites.
-- Scheduling and orchestration features to define workflows composed of multiple agents.
-- Automatically detect rate limits and back off to maximize throughput.
-- Set custom timeouts with no upper bound, useful for long running tasks or always-on agents.
+If you're self hosting, simply replace the `cdp_url` with the url of the Finic instance running on your own server.
+
+##  Planned Features
+- Reverse proxies
+- Captcha solving
+- Computer vision based selectors
+- Interactive sessions for human-in-the-loop handoffs
+- Session recordings

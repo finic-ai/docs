@@ -1,106 +1,58 @@
 ---
-title: 'Quickstart'
-description: 'Create and deploy a browser agent in 30 seconds'
+title: 'Quickstart [10 min]'
+description: 'Connect to a cloud browser and use it to fill out a form'
 ---
+<Note>**This is a preview.** Finic Cloud is currently in development - check out [how to self-host](browsers/self-hosting) in the meantime.</Note>
 
-## Create a new project
-Start by installing Finic.
-```shell
-pip install finicapi
-```
+## Clone example project
+Clone this example repository: https://github.com/finic-ai/form-filler. It contains boilerplate for navigating to this [test page](https://testpages.herokuapp.com/styled/basic-html-form-test.html) for practicing automation.
 
-This installs `create-finic-app` which creates a new python project with boilerplate for poetry, pydantic, and Finic. 
-This example project uses Playwright to sign into [this website](https://practicetestautomation.com/practice-test-login/) and take a screenshot.
-```
-create-finic-app example-project
-```
-<Accordion icon="code" title="Directory Structure">
-```
-example_project/
-├── main/
-│   └── __init__.py
-│   └── main.py
-│
-├── models/
-│   └── __init__.py
-│   └── models.py
-│
-├── Dockerfile
-├── finic_config.json
-├── input.json.example
-├── LICENSE
-├── poetry.lock
-├── pyproject.toml
-├── README.md
-└── secrets.json.example
-```
-</Accordion>
-
-## Edit and test locally
-
-Running the project locally works the same as any other poetry project.
-```shell
-poetry instally
+## Run locally
+Run the project to confirm it works locally.
+```bash
+poetry install
 poetry run start
 ```
+You should see a browser open and the form being filled out as the script runs, followed by a "Form submission successful" message in your terminal.
 
-In order for the example automation to work, you'll need to authenticate with credentials stored in a secret manager, deploy the agent, 
-and pass in a `user_id` to retrieve credentials at runtime.
-<AccordionGroup>
-  <Accordion icon="lock" title="Save Credentials Locally">
-    Rename `secrets.json.example` to `secrets.json` and replace the contents with the following:
-    ```json
-    {
-      "id_123": {
-        "username": "student"
-        "password": "Password123"
-      }
-    }
-    ```
-    `secrets.json` is just a convenient way to test agents locally. In production, you'll want to fetch secrets from Finic Secret Manager.
-  </Accordion>
-  <Accordion icon="brackets-curly" title="Pass In Runtime Arguments">
-    Rename `input.json.example` to `input.json` and replace the contents with the following:
-    ```json
-    {
-      "user_id": "id_123"
-    }
-    ```
-    This passes an argument called `user_id` with a value of `id_123` to your agent when it's triggered.
-  </Accordion>
-</AccordionGroup>
+## Run with Finic Browser Service
+Finic has a free tier with up to 100 minutes of browser time per month, but you'll need to create an account so we can provision you with an API key and monitor usage to make sure it's not being abused. Sign in at https://app.finic.io, then go to the settings page to find your API key.
 
-## Deploy and run your agent
-Run the following in your project directory:
-```shell
-finic-deploy
+Once you have an API key, comment out this line:
+```python
+browser = p.chromium.launch(headless=False, slow_mo=500)
 ```
-The example agent is now deployed to Finic Cloud. You can sign in to the [Finic dashboard](https://app.finic.ai) to view it.
-Once deployed, the agent no longer uses `secrets.json` and `inputs.json`. Instead, secrets must be set in the Finic Secret Manager and
-inputs are specified when you trigger the agent.
 
-<AccordionGroup>
-  <Accordion icon="lock" title="Add Credentials to the Secret Manager">
-    Go to https://app.finic.ai/ and sign in. Navigate to the [Secrets](https://app.finic.ai/secrets) tab. Click "Add Secret" to add the credentials we used previously.
-    ```json
-    "service_name": "Practice Test",
-    "secret_type": "Password",
-    "account_id": "id_123",
-    "secret": {
-      "username": "student",
-      "password": "Password123"
-    }
-    ```
-  </Accordion>
-  <Accordion icon="play" title="Run the Agent">
-    Navigate to the [Agents](https://app.finic.ai/agents) tab. You should see the agent you just deployed in the list on the Agents tab. Click "Run" on it and paste the contents of your `input.json` file.
-    ```json
-    {
-      "user_id": "id_123"
-    }
-    ```
-  </Accordion>
-  <Accordion icon="eye" title="View Results">
-    Once your agent has started running, you can view its progress in the [Monitoring](https://app.finic.ai/monitoring) tab. Once it finishes running, you'll also find the logs here.
-  </Accordion>
-</AccordionGroup>
+Then uncomment this line and insert the API key you received.
+```python
+browser = p.chromium.connect(cdp="wss://browser.finic.io/?apikey=<your-finic-api-key>")
+```
+
+Run the project again. This time, you won't see a browser pop up, but after a few seconds the "Form submission successful" message will appear, confirming that **you successfully connected to a browser
+running in the cloud and controlled it.**
+
+## Next Steps
+You can now modify this script however you want, or add Finic to any other web automation project by changing a single line of code.
+
+<CodeGroup>
+```python Playwright (Python)
+from playwright.sync_api import sync_playwright
+
+playwright = sync_playwright().start()
+browser = playwright.chromium.conne t(cdp="wss://browser.finic.io/?apikey=<your-finic-api-key>")    
+page = browser.new_page()
+await page.goto("https://github.com/finic-ai/finic")
+```
+```typescript Puppeteer (NodeJS)
+import puppeteer from 'puppeteer-core';
+
+(async () => {
+  const browser = await puppeteer.connect({
+    browserWSEndpoint: 'wss://browser.finic.io/?apikey=<your-finic-api-key>'
+  });
+  const page = await browser.newPage();
+  await page.goto('https://github.com/finic-ai/finic');
+})();
+
+```
+</CodeGroup>
