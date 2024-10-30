@@ -27,8 +27,8 @@
   },
   "tabs": [
     {
-      "name": "Blog",
-      "url": "blog"
+      "name": "API Reference",
+      "url": "api-refrence"
     }
   ],
   "anchors": [
@@ -45,20 +45,26 @@
   ],
   "navigation": [
     {
-      "group": "Browser Service",
+      "group": "Development",
       "pages": [
-        "introduction",
-        "quickstart",
-        "browsers/self-hosting",
-        "browsers/cloud"
+        "development/development",
+        "development/reuse_auth",
+        "development/finic-recorder"
       ]
     },
     {
-      "group": "Selector Service",
+      "group": "In Production",
       "pages": [
-        "selectors/introduction",
-        "selectors/generating-selectors",
-        "selectors/using-selectors"
+        "production/deployment",
+        "production/results",
+        "production/monitoring"
+      ]
+    },
+    {
+      "group": "Endpoints",
+      "pages": [
+        "api-reference/endpoint/run-agent",
+        "api-reference/endpoint/session"
       ]
     }
   ],

@@ -1,0 +1,59 @@
+---
+title: 'Finic Recorder'
+description: "How to record and replay traces using Finic's Chrome Extension."
+---
+
+Finic has a Chrome Extension that greatly simplifies the process of developing new automations by recording all DOM interactions on a page, and generating code and selectors to reproduce those interactions.
+
+# Recording a flow
+Download the Finic Recorder Chrome extension [here](). To install it in Chrome, go to Extensions -> Manage Extensions and enable Developer Mode in the top right. Then click "Load unpacked". Select the `dist` directory from the zip file.
+
+Once the extension is installed, enable it from any page by click on the extension. When the sidebar appears, the Finic Recorder will automatically be in "Record" mode.
+
+Now you can start interacting with the page and the recorder will automatically capture your interactions and convert it into Typescript or Python code, in real-time.
+
+GIF here
+
+## Switching between modes
+There are two basic modes in the Finic Recorder:
+- **Record**: Your interactions on the page will be captured and added to the automation script.
+- **Edit**: Interactions on the page are no longer captured, allowing you to edit the automation script directly.
+
+Toggle between the two modes with the "Switch Mode" button in the top bar.
+
+## Basic interactions
+Playwright locators are automatically generated for clicks and inputs. Sometimes, the selector might not be ideal, for example if a label is not available and it uses an attribute or text that is not guaranteed to exist
+when the automation runs automatically. You can change the selector used in the `Locator` tab at the bottom of the extension.
+
+## Control Flow
+Most automations require more than just simple clicks and inputs in order to reproduce human behavior. The Finic Recorder includes built-in support for loops, if statements, error handling, and branching flows. 
+You can find the Control Flow menu at the bottom of the Recorder UI.
+
+### Loops
+Select the container of the element you want to loop through. Select "Loop" from the Control Flow menu and pick one of the child elements you want to loop through. Double check that the selector returns all child elements.
+You can go into Edit mode and add a log statement for each element to verify that the loop is working as expected.
+
+### Conditional Logic
+Select "Conditional Statement" from the Control Flow menu. Add branches to your statement. In the "If..." field, enter a natural language prompt describing the conditions of this branch. Click on the "Then..." field to record a series of
+interactions on the page.
+
+## Error Handling
+There are multiple ways to handle errors:
+
+### Selector timeouts
+By default, Playwright locators time out after 30 seconds, after which the automation will terminate. If you know a particular step is flaky or can have multiple outcomes, handle it gracefully.
+
+### 
+
+# Testing a recorded flow
+Once you're finished recording a flow, replay the automation by going back to the original page. Ensure that the state of the application is the same as when you started. For example, if you started while logged out, log out first.
+If there are forms that are partially filled out, reset those forms.
+
+Then click the "Resume" button to run the automation end to end, or the "Step over" button to run it step by step.
+
+# Deploying an automation
+Your automation script is automatically synced with Finic Cloud as you work. Once you've tested and verified it's working, go to the [Finic dashboard](https://app.finic.io) and navigate to the "Deploy" page.
+
+
+
+The Finic Recorder is built on top of Playwright's [codegen](https://playwright.dev/docs/codegen) and [trace](https://playwright.dev/docs/trace-viewer-intro) modules.

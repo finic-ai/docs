@@ -1,0 +1,32 @@
+---
+title: 'Reuse Auth State'
+description: 'How to preserve authenticated status across sessions.'
+---
+
+For any web service that requires authentication, you'll want to save your cookies and local storage and re-use them for every session. Otherwise, you'll need
+to log in each time, and each execution will be treated as a new browser by the service. This slows your automation down, and can lead to rate rate limits
+or other obstacles if the service detects many logins from different browsers in a short period of time.
+
+In order to save the browser state, call `finic.save_browser_state()` each time after your automation completes a login attempt.
+
+Example:
+```python
+from playwright.sync_api import Playwright
+from finic_py import Finic
+
+finic = Finic(selector_source='file')
+    page, context = finic.launch_browser_sync(headless=False, slow_mo=500)
+    page.goto("https://practicetestautomation.com/practice-test-login/")
+    
+    if page.locator(finic.selectors.get('username_field')).count() > 0:
+        page.locator(finic.selectors.get('username_field')).fill(input.get('username_field'))
+        page.locator(finic.selectors.get('password_field')).fill(input.get('password_field'))
+        page.locator(finic.selectors.get('login_button')).click()
+        page.wait_for_load_state('load')
+        finic.save_browser_state()
+
+    context.close()
+```
+
+This saves your browser state to `browser_state.json`. The next time the automation runs, it will check for `browser_state.json` and if it exists, will load the cookies and local
+storage objects into memory. For most websites, this means the automation does not need to login in again unless the session has been invalidated by the service.

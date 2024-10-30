@@ -1,0 +1,71 @@
+---
+title: 'Development'
+description: 'How build new automations using Finic.'
+---
+These are instructions for how to builds a new automation from scratching using Finic. See [Finic Recorder](/development/finic-recorder) for how to automatically generate an automation with the
+Finic chrome extension.
+
+## Initializing a new project
+Install Finic globally with `pip install finic` or `pipx install finic`.
+Then run the following command to create a new Finic automation in the current directory.
+```bash
+$ finic init <automation-name>
+```
+
+This automatically sets up your project structure, including some boilerplate code. Your code should go in `main.py`.
+
+## Providing inputs
+Most automations will require input varibles to be provided at runtime. This can include auth secrets like usernames and passwords, variables that define
+the automation's behavior, or values that should be input into form fields.
+
+### Local
+You can include input values in a file called `finic_input.json` in the root directory of your project. This automaticaly gets picked up by Finic and passed into your `main` function.
+
+### Production
+In production, you can specify inputs for a task when running it manually from the Finic dashboard, or by specifying it in a `task_input` parameter in the request body when
+triggering a task from the API.
+
+## Defining selectors
+Selectors should be placed in `selectors.yaml` (see the example below). Both XPath and CSS selectors are supported.
+
+They can then be accessed directly from the Finic client, assuming the `selector_source` is set to `file`.
+```python
+finic = Finic(selector_source='file')
+finic.selectors.get('email_field')
+```
+
+Selectors can also be defined directly in your code, although this approach makes your code harder to read and less modular.
+
+## Example
+Here's an example of a basic automation.
+
+<CodeGroup>
+```python main.py
+from playwright.sync_api import Playwright
+from finic_py import Finic
+
+@Finic.entrypoint()
+def main(input: Dict):
+    finic = Finic(selector_source='file')
+    page, context = finic.launch_browser_sync(headless=False, slow_mo=500)
+    page.goto("https://practicetestautomation.com/practice-test-login/")
+    
+    if page.locator(finic.selectors.get('username_field')).count() > 0:
+        page.locator(finic.selectors.get('username_field')).fill(input.get('username_field'))
+        page.locator(finic.selectors.get('password_field')).fill(input.get('password_field'))
+        page.locator(finic.selectors.get('login_button')).click()
+
+    context.close()
+```
+```yaml selectors.py
+username_field: //input[@name="username"]
+password_field: //input[@name="password"]
+login_button: //button[@name="submit"]
+```
+```json finic_input.json
+{
+    "username_field": "example_username",
+    "password_field": "password1234"
+}
+```
+</CodeGroup>

@@ -1,0 +1,21 @@
+---
+title: 'Deployment'
+description: 'How deploy and run Finic automations.'
+---
+
+Deploying a Finic automation is easy. Simply run `finic deploy` from your command line in any project that's a valid Finic project. All you need is a Finic API key, which you can
+find [here](https://app.finic.io/settings).
+
+Once an automation is deployed, you can find it at https://app.finic.io/automations.
+
+## Running an automation
+### Dashboard
+You can run automations manually from the dashboard by clicking on any automation to open it, then clicking the "Run" button.
+
+### API
+You can invoke automations programatically by sending a request to the `run-agent` endpoint. See the [API reference](/api-reference/endpoint/run-agent) for more information.
+
+## Options
+You can provide the following options both in the dashboard and via API:
+- **max_retries:** The number of times to retry this automation if it fails. Helps account for non-deterministic issues that cause flakiness, like network issues or temporary downtime.
+- **browser_id:** A unique identifer for the browser you'd like to use. Useful for preserving cookies and local storage accross sessions to avoid having to authenticate each time.

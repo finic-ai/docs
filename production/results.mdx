@@ -1,0 +1,17 @@
+---
+title: 'Getting Results'
+description: 'How to get results from your automations.'
+---
+
+Some automations include a scraping or data collection component. If your automation returns any data, you can retrieve it in three ways.
+
+## Webhook
+The best way to retrieve results from your automation is to provide a webhook URL. Once an automation is finished running, we send the results to this endpoint.
+
+## API Polling
+If you don't have a webhook set up, you can poll our endpoints for results. When you call the `run-agent` endpoint, you will receive a `session_id`. You can then call the
+`session` endpoint with this ID to check the status of the automation. If the `status` property is `success`, you can find the results in the `results` property. See
+the [API reference](/api-reference/endpoints/session) for more information.
+
+## Dashboard
+You can view results directly in the Finic dashboard by clicking on any automation, selecting the execution, then clicking on the "View Results" button.

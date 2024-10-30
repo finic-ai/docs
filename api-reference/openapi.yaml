@@ -8,41 +8,133 @@ servers:
   - url: https://api.finic.ai
 
 paths:
-  /run-agent:
+  /run-agent/{agent_id}:
     post:
-      summary: Run an agent
-      description: Execute a specific AI agent with given input
-      security:
-        - BearerAuth: []
+      summary: Run an agent with specified parameters
+      description: Creates a new session and starts execution of the specified agent
+      parameters:
+        - name: agent_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the agent to run
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Bearer token for authentication
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              properties:
-                agent_id:
-                  type: string
-                  description: The ID of the agent to run, defined when you first deployed the agent.
-                input:
-                  type: object
-                  description: The input data for the agent. Each field will be passed as an argument to the agent's entrypoint function.
               required:
-                - agent_id
+                - browser_id
+                - agent_input
+              properties:
+                browser_id:
+                  type: string
+                  description: The ID of the browser instance to use
+                agent_input:
+                  type: object
+                  description: Input parameters for the agent
+                max_retries:
+                  type: integer
+                  description: Maximum number of retry attempts
+                  default: 0
       responses:
         '200':
-          description: Successful response. Agent has started running.
+          description: Successfully started agent execution
           content:
             application/json:
               schema:
                 type: object
-                # You can define the response structure here if known
-        '400':
-          description: Bad request
+                properties:
+                  session_id:
+                    type: string
+                    description: The unique identifier for the created session
         '401':
-          description: Unauthorized
+          description: Unauthorized - Invalid or missing authentication token
         '500':
           description: Internal server error
+      security:
+        - BearerAuth: []
+  /session/{session_id}:
+    get:
+      summary: Get Session Details
+      description: Retrieves details of a specific session by its ID
+      parameters:
+        - in: path
+          name: session_id
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the session
+        - in: header
+          name: Authorization
+          required: true
+          schema:
+            type: string
+          description: Bearer token for authentication
+      responses:
+        '200':
+          description: Session details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Unique identifier of the session
+                  browser_id:
+                    type: string
+                    description: ID of the associated browser
+                  agent_id:
+                    type: string
+                    description: ID of the associated agent
+                  status:
+                    type: string
+                    enum: [RUNNING, SUCCESS, FAILED]
+                    description: Current status of the session
+                  created_at:
+                    type: string
+                    format: date-time
+                    description: Timestamp when the session was created
+                  max_retries:
+                    type: integer
+                    nullable: true
+                    description: Maximum number of retries to attempt
+                  input:
+                    type: object
+                    description: Input parameters for the automation
+                  attempts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                          enum: [RUNNING, SUCCESS, FAILED]
+                        logs:
+                          type: array
+                          items:
+                            type: string
+                    description: List of execution attempts
+        '401':
+          description: Unauthorized - Invalid or missing authentication token
+        '404':
+          description: Session not found
+        '500':
+          description: Internal server error
+      tags:
+        - Sessions
+      security:
+        - BearerAuth: []
+    
 
 components:
   securitySchemes:
